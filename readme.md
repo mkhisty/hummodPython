@@ -45,7 +45,7 @@ I will experiment with both, the eager and lazy methods, to find a sweet point f
 To allow the python library to convert the ```.des``` schema into python objects, I will be using an xml parser to first turn all XML scripts into json which would server as a configuration packet for a certain structure.
 
 ## Current Progress and next steps.
-Currently, I have made a proof-of-concept library and only translated placeholder structures.
+Currently, I have made a proof-of-concept library (with lazy loading) and only translated placeholder structures.
 If the design goal is agreed upon then within the coming week I will:
 * Translate all structures
 * Detect & solve circular dependencies
