@@ -47,7 +47,7 @@ To allow the python library to convert the ```.des``` schema into python objects
 ## Current Progress and next steps.
 Currently, I have made a proof-of-concept library (with lazy loading) and only translated placeholder structures.
 If the design goal is agreed upon then within the coming week I will:
-* Translate all structures
+* Design a better parser to handle more niche tasks. 
 * Detect & solve circular dependencies
 * Test lazy loading scheme across real, long structure chains instead of the placeholders.  
 To run, run ```test.py``` in the same directory as ```HumMod```
