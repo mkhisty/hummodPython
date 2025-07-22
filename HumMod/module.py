@@ -12,6 +12,7 @@ class Module:
         self.variables = self._load_variables() #Variables and their calculation expressions
         
         self.values = {} #Last calculated/manually edited values
+        self.user_set = set() # Track variables set by user
 
     def vars(self):
         #returns list of variables
@@ -23,19 +24,21 @@ class Module:
         result = eval(expression)
 
         self.values[var_name] = result
+        self.user_set.discard(var_name)  # Remove from user_set if present
         return result
 
 
     def set(self, var_name, value):
         #Manually set variable
         self.values[var_name] = value
+        self.user_set.add(var_name)
 
     def get(self, var_name):
-        #Returns calculated value, or calculates it at this point
-        if var_name in self.values:
+        #Returns user-set value, or calculates it if not set by user
+        if var_name in self.user_set:
             return self.values.get(var_name)
         else:
-            self.values[var_name] = self.calc(var_name)
+            return self.calc(var_name)
 
     def preprocess(self, expression):
         #

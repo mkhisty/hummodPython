@@ -16,4 +16,4 @@ class HumModClient:
         #Used for inter-module variable refrences
         module_name, var_name = name.split(".")
         module = self.getModule(module_name)
-        return module.calc(var_name) 
+        return module.get(var_name) 
