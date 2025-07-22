@@ -1,7 +1,7 @@
 import xml.etree.ElementTree as ET
 import json
 import sys
-
+#Currently only parses variables, will add more functionality later.
 def parse_des_xml(xml_file, json_file):
     
     # Read the XML file
