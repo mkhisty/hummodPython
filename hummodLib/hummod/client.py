@@ -4,6 +4,7 @@ class HumModClient:
     def __init__(self):
         #stores all loaded modules
         self.modules = {}
+        self.dt=1
 
     def getModule(self, name):
         #returns cached module or loads a new one
@@ -24,15 +25,9 @@ class HumModClient:
             print(f"  - {module_name}")
 
 
-    dt = 1.0  # class variable for timestep in minutes
 
     def simulate(self, duration=10.0, timestep=1.0, apply=None):
-        """
-        Simulate all loaded modules for a given duration (minutes) and timestep (minutes).
-        At each step, calculates all variables/blocks and stores numerical variable values in a dictionary.
-        Returns a list of dicts, one per timestep, with keys as 'Module.localname' and values as the calculated value.
-        """
-        HumModClient.dt = timestep
+        self.dt = timestep
         nsteps = int(duration / timestep)
         print(f"Simulating for {duration} minutes, timestep {timestep} min, {nsteps} steps.")
         results = []
@@ -51,14 +46,7 @@ class HumModClient:
                 # Calculate all definitions (blocks/calls)
                 if hasattr(module, 'data') and 'definitions' in module.data:
                     for def_name in module.data['definitions']:
-
                         module.calc(def_name)
             results.append(step_result)
         print("Simulation complete.")
         return results
-
-    def pause(self):
-        """
-        No-op for compatibility. Simulation is not threaded in this version.
-        """
-        print("Pause called (no effect in non-threaded simulation).")

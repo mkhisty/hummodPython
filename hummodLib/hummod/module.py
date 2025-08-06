@@ -17,14 +17,15 @@ class Module:
         self.variables = self._process_variables() #Variables and their calculation expressions
         
         self.values = {} #Last calculated/manually edited values
-        self.user_set = set() # Track variables set by user
+        self.user_set = set()
+
     def curve(self, p1_x, p1_y, p1_slope, p2_x, p2_y, p2_slope, x):
-        # Use scipy's CubicSpline for two points with derivatives
         xs = [p1_x, p2_x]
         ys = [p1_y, p2_y]
         bc_type = ((1, p1_slope), (1, p2_slope))
         cs = CubicSpline(xs, ys, bc_type=bc_type)
         return float(cs(x))
+    
     def vars(self):
         #returns list of variables
         return list(self.variables.keys())
@@ -46,13 +47,9 @@ class Module:
                 print(f"    {func_name}: {func_data}")
 
     def calc(self, var_name):
-        # print("Calculating:", var_name)
-        # print(self.variables)
-        # If user has set a value, return it
         if var_name in self.user_set:
             return self.values.get(var_name)
 
-        # 1. If variable is defined in 'variables'
         if 'variables' in self.data and var_name in self.data['variables']:
             var_info = self.data['variables'][var_name]
             value = var_info.get('value', None)
@@ -78,54 +75,42 @@ class Module:
                         else:
                             arg_vals.append(arg)
                     return self._apply_function(func_name, arg_vals)
-                # Otherwise, just return the function definition
-                return self.data['functions'][var_name]
+            # If value is null, no function, but is in definitions, fall through to definitions logic below
 
-        # 2. If variable is defined in 'definitions'
         if 'definitions' in self.data:
             defs = self.data['definitions']
             if var_name in defs:
                 definition = defs[var_name]
-                # If definition is a dict with 'CALLS', call each
-                if isinstance(definition, dict) and 'CALLS' in definition:
-                    for call in definition['CALLS']:
-                        module_name, def_name = call.split('.')
-                        module = self.client.getModule(module_name)
-                        module.calc(def_name)
-                    return True
-                # If definition is a dict with variable/function calls
+                # If definition is a dict, handle CALLS, function calls, and string definitions in any combination
                 if isinstance(definition, dict):
-                    # e.g. {"Effect": "Effect [ Area ]"}
                     result = None
                     for key, expr in definition.items():
-                        # Recursively calc for nested blocks/vars
-                        if key in self.data.get('variables', {}):
-                            self.calc(key)
-                        func_name, args = self._parse_function_call(expr)
-                        # Recursively calc for args (vars/blocks)
-                        for arg in args:
-                            if arg in self.data.get('variables', {}):
-                                self.calc(arg)
-                            elif arg in self.data.get('definitions', {}):
-                                self.calc(arg)
-                        result = self._apply_function(func_name, args)
+                        if key == 'CALLS' and isinstance(expr, list):
+                            for call in expr:
+                                module_name, def_name = call.split('.')
+                                module = self.client.getModule(module_name)
+                                module.calc(def_name)
+                        else:
+                            # If expr is a string, check if it's a function call or literal value
+                            if isinstance(expr, str):
+                                if '[' in expr and ']' in expr:
+                                    func_name, args = self._parse_function_call(expr)
+                                    # Recursively calc for args (vars/blocks)
+                                    for arg in args:
+                                        if arg in self.data.get('variables', {}):
+                                            self.calc(arg)
+                                        elif arg in self.data.get('definitions', {}):
+                                            self.calc(arg)
+                                    result = self._apply_function(func_name, args)
+                                else:
+                                    # Treat as literal value
+                                    result = expr
                     return result
                 # If definition is a string (function call)
-                if isinstance(definition, str):
-                    func_name, args = self._parse_function_call(definition)
-                    # Recursively calc for args (vars/blocks)
-                    for arg in args:
-                        if arg in self.data.get('variables', {}):
-                            self.calc(arg)
-                        elif arg in self.data.get('definitions', {}):
-                            self.calc(arg)
-                    return self._apply_function(func_name, args)
 
-        # 3. If variable is a function
         if 'functions' in self.data and var_name in self.data['functions']:
             return self.data['functions'][var_name]
 
-        # 4. Fallback: check processed variables
         if var_name in self.variables:
             return self.variables[var_name]
 
@@ -142,10 +127,6 @@ class Module:
             return self.values.get(var_name)
         else:
             return self.calc(var_name)
-
-    def preprocess(self, expression):
-        # Deprecated: no longer used for meta-programming
-        return expression
 
     def _load_data(self):
         base_dir = os.path.dirname(os.path.abspath(__file__))
@@ -170,7 +151,6 @@ class Module:
             func_name = match.group(1).strip()
             args = [a.strip() for a in match.group(2).split(',') if a.strip()]
             return func_name, args
-        # If not a function call, treat as variable
         return expr.strip(), []
 
     def _get_function_args_from_definitions(self, var_name):
@@ -190,7 +170,7 @@ class Module:
 
     def _apply_function(self, func_name, args):
         # Get the function definition
-        func_def = self.data['functions'][func_name] if 'functions' in self.data and func_name in self.data['functions'] else None
+        func_def = self.data['functions'][func_name]
         if func_def and func_def.startswith('<CURVE(') and func_def.endswith(')>'):
             # Parse CURVE expression: <CURVE((0.0,1.0,0.0),(3.3,0.0,0.0))>
             curve_content = func_def[7:-2]  # Remove '<CURVE(' and ')>'
@@ -210,5 +190,5 @@ class Module:
                     x_value = 0.0
                 return self.curve(float(coords1[0]), float(coords1[1]), float(coords1[2]),
                            float(coords2[0]), float(coords2[1]), float(coords2[2]), x_value)
-        # For other function types, return 0 for now
-        return 0.0
+        # For other function types like DFQs, return 0 for now
+        return 0

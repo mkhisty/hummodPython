@@ -7,6 +7,7 @@ HeartValves = client.getModule("HeartValves")
 HeartValves.display()  
 HeartValves.calc("Parms")  
 client.displayModules()  
+
 TricuspidValve_Regurgitation = client.getModule("TricuspidValve-Regurgitation")  
 TricuspidValve_Stenosis = client.getModule("TricuspidValve-Stenosis") 
 
