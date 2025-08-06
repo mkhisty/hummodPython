@@ -17,13 +17,6 @@ results = []
 
 def increment(client,i):
     client.getModule("TricuspidValve-Regurgitation").set("Area", i)
-    client.getModule("TricuspidValve-Stenosis").set("Area", i) 
-    client.getModule("MitralValve-Regurgitation").set("Area", i) 
-    client.getModule("MitralValve-Stenosis").set("Area", i)  
-    client.getModule("PulmonicValve-Regurgitation").set("Area", i) 
-    client.getModule("PulmonicValve-Stenosis").set("Area", i)  
-    client.getModule("AorticValve-Regurgitation").set("Area", i)
-    client.getModule("AorticValve-Stenosis").set("Area", i)  
 
 
 
@@ -35,10 +28,10 @@ for i, step in enumerate(results):
 
 
 import matplotlib.pyplot as plt
-trace = [float(i["AorticValve-Stenosis.Effect"]) for i in results]
+trace = [float(i["TricuspidValve-Regurgitation.Effect"]) for i in results]
 plt.plot(range(len(trace)), trace, marker='o')
 plt.xlabel('Step')
-plt.ylabel('TricuspidValve-Stenosis.Effect')
+plt.ylabel('TricuspidValve-Regurgitation.Effect')
 plt.grid(True)
 plt.show()
 
