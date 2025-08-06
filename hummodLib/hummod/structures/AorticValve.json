@@ -1,0 +1,10 @@
+{
+ "definitions": {
+  "Parms": {
+   "CALLS": [
+    "AorticValve-Stenosis.Parms",
+    "AorticValve-Regurgitation.Parms"
+   ]
+  }
+ }
+}

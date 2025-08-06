@@ -1,6 +1,0 @@
-{
-  "StrokeVolume": "LeftHeartPumping-Pumping.StrokeVolume",
-  "Flow": "LeftHeartPumping-Pumping.BloodFlow",
-  "Flow(L/Min)": "Flow / 1000.0",
-  "CardiacIndex": "Flow(L/Min) / 1000"
-}

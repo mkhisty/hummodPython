@@ -32,6 +32,11 @@ env/
 */env/
 */.env/
 
+
+#Preprocessing
+parsed/
+structs/
+
 # Environment variables
 .env
 .env-*

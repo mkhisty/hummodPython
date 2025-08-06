@@ -1,0 +1,20 @@
+{
+ "variables": {
+  "Area": {
+   "type": "parm",
+   "value": "0.0"
+  },
+  "Effect": {
+   "type": "var",
+   "value": null
+  }
+ },
+ "functions": {
+  "Effect": "<CURVE((0.0,1.0,0.0),(5.0,0.0,0.0))>"
+ },
+ "definitions": {
+  "Parms": {
+   "Effect": "Effect [ Area ]"
+  }
+ }
+}

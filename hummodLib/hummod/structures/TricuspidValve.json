@@ -1,0 +1,10 @@
+{
+ "definitions": {
+  "Parms": {
+   "CALLS": [
+    "TricuspidValve-Stenosis.Parms",
+    "TricuspidValve-Regurgitation.Parms"
+   ]
+  }
+ }
+}

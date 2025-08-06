@@ -1,0 +1,12 @@
+{
+ "definitions": {
+  "Parms": {
+   "CALLS": [
+    "AorticValve.Parms",
+    "MitralValve.Parms",
+    "PulmonicValve.Parms",
+    "TricuspidValve.Parms"
+   ]
+  }
+ }
+}
