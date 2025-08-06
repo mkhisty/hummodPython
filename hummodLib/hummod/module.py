@@ -76,7 +76,6 @@ class Module:
                             arg_vals.append(arg)
                     return self._apply_function(func_name, arg_vals)
             # If value is null, no function, but is in definitions, fall through to definitions logic below
-
         if 'definitions' in self.data:
             defs = self.data['definitions']
             if var_name in defs:
@@ -91,28 +90,11 @@ class Module:
                                 module = self.client.getModule(module_name)
                                 module.calc(def_name)
                         else:
-                            # If expr is a string, check if it's a function call or literal value
-                            if isinstance(expr, str):
-                                if '[' in expr and ']' in expr:
-                                    func_name, args = self._parse_function_call(expr)
-                                    # Recursively calc for args (vars/blocks)
-                                    for arg in args:
-                                        if arg in self.data.get('variables', {}):
-                                            self.calc(arg)
-                                        elif arg in self.data.get('definitions', {}):
-                                            self.calc(arg)
-                                    result = self._apply_function(func_name, args)
-                                else:
-                                    # Treat as literal value
-                                    result = expr
+                            result = expr
                     return result
-                # If definition is a string (function call)
 
-        if 'functions' in self.data and var_name in self.data['functions']:
-            return self.data['functions'][var_name]
-
-        if var_name in self.variables:
-            return self.variables[var_name]
+#        if var_name in self.data['functions']: Not Sure if i need this
+#            return self._apply_function(var_name, [])
 
         return None
 
